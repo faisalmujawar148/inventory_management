@@ -122,14 +122,15 @@ export default function Home() {
             <Stack width={"100%"} direction="row" spacing={2}>
               <TextField variant="outlined" fullWidth value={itemName} onChange={(e) => { setItemName(e.target.value) }}></TextField>
               <Button 
-                variant="outlined" 
+                variant="outlined"
+                
                 onClick={() => {
                   addItem(itemName);
                   setItemName('');
                   handleClose();
                 }}
               > 
-                Add
+                <Typography variant='h6' color={"text.secondary"} > Add </Typography>
               </Button>
             </Stack>
           </Box>
