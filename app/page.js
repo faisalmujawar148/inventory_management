@@ -9,20 +9,19 @@ import { createTheme, responsiveFontSizes, ThemeProvider } from '@mui/material/s
 
 let theme = createTheme({
   palette: {
-    mode: 'dark',  // Set the mode to 'dark' for dark mode
+    mode: 'dark',
     primary: {
-      main: '#1e1e1e', // Light blue color for primary
+      main: '#1e1e1e',
     },
     secondary: {
-      main: '#f48fb1', // Light pink color for secondary
+      main: '#f48fb1',
     },
     background: {
-      default: '#121212',  // Dark background color
-      
+      default: '#121212',
     },
     text: {
-      primary: '#ffffff',  // White text color for primary text
-      secondary: '#b0b0b0',  // Light grey text color for secondary text
+      primary: '#ffffff',
+      secondary: '#b0b0b0',
     },
   },
 });
@@ -30,8 +29,10 @@ theme = responsiveFontSizes(theme);
 
 export default function Home() {
   const [inventory, setInventory] = useState([]);
+  const [filteredInventory, setFilteredInventory] = useState([]);
   const [open, setOpen] = useState(false);
   const [itemName, setItemName] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
 
   const updateInventory = async () => {
     const snapshot = query(collection(firestore, 'inventory'));
@@ -44,6 +45,7 @@ export default function Home() {
       });
     });
     setInventory(inventoryList);
+    setFilteredInventory(inventoryList); // Initialize filtered inventory
   };
 
   const removeItem = async (item) => {
@@ -78,6 +80,14 @@ export default function Home() {
     updateInventory();
   }, []);
 
+  useEffect(() => {
+    // Filter inventory based on search term
+    const filtered = inventory.filter(item => 
+      item.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredInventory(filtered);
+  }, [searchTerm, inventory]);
+
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
@@ -91,7 +101,7 @@ export default function Home() {
         flexDirection="column" 
         alignItems="center" 
         gap={2}
-        sx={{ backgroundColor: 'background.default' }}  // Ensure the background is dark
+        sx={{ backgroundColor: 'background.default' }}
       >
         <Modal open={open} onClose={handleClose}>
           <Box 
@@ -124,8 +134,19 @@ export default function Home() {
             </Stack>
           </Box>
         </Modal>
+
+        <Box width={"70vw"} mb={2} display="flex" justifyContent="center">
+          <TextField 
+            fullWidth
+            variant="outlined" 
+            placeholder="Search items" 
+            value={searchTerm} 
+            onChange={(e) => setSearchTerm(e.target.value)} 
+            sx={{ bgcolor: 'background.paper', color: 'text.primary' }}
+          />
+        </Box>
         
-        <Box border={'1px solid #333'} width={"80vw"}>
+        <Box border={'1px solid #333'} width={"80vw"} alignItems={"center"}>
           <Box 
             width="100%" 
             height="100px" 
@@ -140,7 +161,7 @@ export default function Home() {
           </Box>
         
           <Stack width="100%" height="600px" spacing={2} overflow={"auto"}>
-            {inventory.map(({ name, quantity }) => (
+            {filteredInventory.map(({ name, quantity }) => (
               <Grid 
                 container 
                 key={name} 
