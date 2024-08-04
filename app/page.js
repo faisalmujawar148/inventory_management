@@ -120,7 +120,7 @@ export default function Home() {
             ))}
           </Stack>
         </Box>
-        <IconButton  sx={{ color: "#F0F0F0F0" }} variant="contained" onClick={handleOpen}>
+        <IconButton  variant="contained" onClick={handleOpen}>
           <AddIcon fontSize="large"/>
         </IconButton>
       </Box>
